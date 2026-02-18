@@ -1,0 +1,91 @@
+{
+  "id": "sms-gateway",
+  "name": "SMS Gateway",
+  "description": "Send and receive SMS via sms-gate.app",
+  "uiHints": {
+    "username": {
+      "label": "Username",
+      "help": "Username from sms-gate.app Cloud Server settings"
+    },
+    "password": {
+      "label": "Password",
+      "sensitive": true,
+      "help": "Password from sms-gate.app Cloud Server settings"
+    },
+    "publicUrl": {
+      "label": "Public URL",
+      "placeholder": "https://your-domain.example.com",
+      "help": "Publicly reachable base URL for webhook delivery (e.g. via Cloudflare Tunnel, Tailscale, or ngrok)"
+    },
+    "webhookSecret": {
+      "label": "Webhook Secret",
+      "sensitive": true,
+      "help": "HMAC-SHA256 secret for verifying webhook signatures"
+    },
+    "apiUrl": {
+      "label": "API URL",
+      "advanced": true,
+      "placeholder": "https://api.sms-gate.app/3rdparty/v1",
+      "help": "Base URL for the sms-gate.app API. Change only if using a local/private server."
+    },
+    "defaultSimNumber": {
+      "label": "Default SIM Number",
+      "advanced": true,
+      "help": "SIM slot to use for sending (0 or 1). Default: 0"
+    },
+    "webhookPath": {
+      "label": "Webhook Path",
+      "advanced": true,
+      "placeholder": "/plugins/sms-gateway/webhook",
+      "help": "HTTP path for incoming webhooks. Default: /plugins/sms-gateway/webhook"
+    },
+    "inboxRetentionMinutes": {
+      "label": "Inbox Retention (minutes)",
+      "advanced": true,
+      "help": "How long to keep messages in the store. Default: 1440 (24 hours)"
+    },
+    "maxStoreSize": {
+      "label": "Max Store Size",
+      "advanced": true,
+      "help": "Maximum number of messages to keep in each store (inbox/sent). Default: 500"
+    }
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["username", "password", "publicUrl", "webhookSecret"],
+    "properties": {
+      "username": {
+        "type": "string"
+      },
+      "password": {
+        "type": "string"
+      },
+      "publicUrl": {
+        "type": "string"
+      },
+      "webhookSecret": {
+        "type": "string"
+      },
+      "apiUrl": {
+        "type": "string"
+      },
+      "defaultSimNumber": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 1
+      },
+      "webhookPath": {
+        "type": "string"
+      },
+      "inboxRetentionMinutes": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "maxStoreSize": {
+        "type": "integer",
+        "minimum": 1
+      }
+    }
+  }
+}

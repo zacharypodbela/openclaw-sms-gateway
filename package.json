@@ -1,0 +1,15 @@
+{
+  "name": "openclaw-sms-gateway",
+  "version": "0.1.0",
+  "description": "Send and receive SMS via sms-gate.app",
+  "type": "module",
+  "openclaw": {
+    "extensions": ["./index.ts"]
+  },
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
