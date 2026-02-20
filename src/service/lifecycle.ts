@@ -31,7 +31,7 @@ export function createLifecycleService(
       const { logger } = ctx;
 
       // Initialize message store
-      await store.init(ctx.stateDir, config.inboxRetentionMinutes, config.maxStoreSize);
+      await store.init(ctx.stateDir, config.retentionMinutes, config.retentionMaxMessages);
       logger.info("sms-gateway: message store initialized");
 
       // Start periodic flush

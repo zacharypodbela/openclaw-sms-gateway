@@ -31,7 +31,7 @@
     "defaultSimNumber": {
       "label": "Default SIM Number",
       "advanced": true,
-      "help": "SIM slot to use for sending (0 or 1). Default: 0"
+      "help": "SIM slot to use for sending (1 or 2). Default: 1"
     },
     "webhookPath": {
       "label": "Webhook Path",
@@ -39,15 +39,15 @@
       "placeholder": "/plugins/sms-gateway/webhook",
       "help": "HTTP path for incoming webhooks. Default: /plugins/sms-gateway/webhook"
     },
-    "inboxRetentionMinutes": {
-      "label": "Inbox Retention (minutes)",
+    "retentionMinutes": {
+      "label": "Retention Time (minutes)",
       "advanced": true,
-      "help": "How long to keep messages in the store. Default: 1440 (24 hours)"
+      "help": "Prune messages older than this many minutes. Unset = keep forever."
     },
-    "maxStoreSize": {
-      "label": "Max Store Size",
+    "retentionMaxMessages": {
+      "label": "Retention Max Messages",
       "advanced": true,
-      "help": "Maximum number of messages to keep in each store (inbox/sent). Default: 500"
+      "help": "Maximum number of messages to keep per store (inbox/sent). Unset = no limit."
     }
   },
   "configSchema": {
@@ -77,11 +77,11 @@
       "webhookPath": {
         "type": "string"
       },
-      "inboxRetentionMinutes": {
+      "retentionMinutes": {
         "type": "integer",
         "minimum": 1
       },
-      "maxStoreSize": {
+      "retentionMaxMessages": {
         "type": "integer",
         "minimum": 1
       }

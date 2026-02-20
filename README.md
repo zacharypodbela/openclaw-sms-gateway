@@ -43,8 +43,8 @@ Add to your `openclaw.json` under `plugins.entries.sms-gateway.config`:
 | `apiUrl` | No | `https://api.sms-gate.app/3rdparty/v1` | API base URL (change for local/private server mode) |
 | `defaultSimNumber` | No | `1` | SIM slot to use for sending (1 or 2) |
 | `webhookPath` | No | `/plugins/sms-gateway/webhook` | HTTP path for incoming webhooks |
-| `inboxRetentionMinutes` | No | `1440` (24h) | How long to keep messages in the store |
-| `maxStoreSize` | No | `500` | Maximum messages per store (inbox/sent) |
+| `retentionMinutes` | No | Unset (keep forever) | Prune messages older than this many minutes |
+| `retentionMaxMessages` | No | Unset (no limit) | Maximum messages per store (inbox/sent) |
 
 ## Tools
 

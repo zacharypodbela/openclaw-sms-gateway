@@ -6,8 +6,8 @@ export type SmsGatewayConfig = {
   apiUrl: string;
   defaultSimNumber: number;
   webhookPath: string;
-  inboxRetentionMinutes: number;
-  maxStoreSize: number;
+  retentionMinutes: number | null;
+  retentionMaxMessages: number | null;
 };
 
 export function parseConfig(
@@ -25,9 +25,8 @@ export function parseConfig(
   const defaultSimNumber = optionalInt(raw, "defaultSimNumber") ?? 1;
   const webhookPath =
     optionalString(raw, "webhookPath") ?? "/plugins/sms-gateway/webhook";
-  const inboxRetentionMinutes =
-    optionalInt(raw, "inboxRetentionMinutes") ?? 1440;
-  const maxStoreSize = optionalInt(raw, "maxStoreSize") ?? 500;
+  const retentionMinutes = optionalInt(raw, "retentionMinutes") ?? null;
+  const retentionMaxMessages = optionalInt(raw, "retentionMaxMessages") ?? null;
 
   return {
     username,
@@ -37,8 +36,8 @@ export function parseConfig(
     apiUrl: apiUrl.replace(/\/+$/, ""),
     defaultSimNumber,
     webhookPath,
-    inboxRetentionMinutes,
-    maxStoreSize,
+    retentionMinutes,
+    retentionMaxMessages,
   };
 }
 

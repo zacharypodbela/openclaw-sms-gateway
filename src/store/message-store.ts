@@ -51,18 +51,18 @@ const LOCK_OPTIONS: FileLockOptions = {
 export class MessageStore {
   private data: StoreData = { version: 1, inbox: [], sent: [] };
   private storePath: string | null = null;
-  private retentionMs: number = 24 * 60 * 60 * 1000;
-  private maxSize: number = 500;
+  private retentionMs: number | null = null;
+  private maxSize: number | null = null;
 
   /**
    * Initialize the store from disk. Must be called before use.
    */
   async init(
     stateDir: string,
-    retentionMinutes: number,
-    maxSize: number,
+    retentionMinutes: number | null,
+    maxSize: number | null,
   ): Promise<void> {
-    this.retentionMs = retentionMinutes * 60 * 1000;
+    this.retentionMs = retentionMinutes != null ? retentionMinutes * 60 * 1000 : null;
     this.maxSize = maxSize;
     const dir = path.join(stateDir, STORE_DIR);
     await fs.mkdir(dir, { recursive: true });
@@ -190,22 +190,25 @@ export class MessageStore {
   }
 
   private prune(): void {
-    const cutoff = Date.now() - this.retentionMs;
-
     // Prune by retention
-    this.data.inbox = this.data.inbox.filter((m) => m.receivedAt >= cutoff);
-    this.data.sent = this.data.sent.filter((m) => m.sentAt >= cutoff);
+    if (this.retentionMs != null) {
+      const cutoff = Date.now() - this.retentionMs;
+      this.data.inbox = this.data.inbox.filter((m) => m.receivedAt >= cutoff);
+      this.data.sent = this.data.sent.filter((m) => m.sentAt >= cutoff);
+    }
 
     // Cap at maxSize (remove oldest from front)
-    if (this.data.inbox.length > this.maxSize) {
-      this.data.inbox = this.data.inbox.slice(
-        this.data.inbox.length - this.maxSize,
-      );
-    }
-    if (this.data.sent.length > this.maxSize) {
-      this.data.sent = this.data.sent.slice(
-        this.data.sent.length - this.maxSize,
-      );
+    if (this.maxSize != null) {
+      if (this.data.inbox.length > this.maxSize) {
+        this.data.inbox = this.data.inbox.slice(
+          this.data.inbox.length - this.maxSize,
+        );
+      }
+      if (this.data.sent.length > this.maxSize) {
+        this.data.sent = this.data.sent.slice(
+          this.data.sent.length - this.maxSize,
+        );
+      }
     }
   }
 }
