@@ -102,6 +102,28 @@ export class MessageStore {
     return reversed.slice(opts.offset, opts.offset + opts.limit);
   }
 
+  querySent(opts: {
+    to?: string;
+    sinceMs?: number;
+    limit: number;
+    offset: number;
+  }): SentMessage[] {
+    let results = this.data.sent;
+
+    if (opts.to) {
+      const to = opts.to;
+      results = results.filter((m) => m.to === to);
+    }
+
+    if (opts.sinceMs !== undefined) {
+      const cutoff = Date.now() - opts.sinceMs;
+      results = results.filter((m) => m.sentAt >= cutoff);
+    }
+
+    const reversed = [...results].reverse();
+    return reversed.slice(opts.offset, opts.offset + opts.limit);
+  }
+
   // -----------------------------------------------------------------------
   // Sent
   // -----------------------------------------------------------------------

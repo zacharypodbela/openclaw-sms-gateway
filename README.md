@@ -55,11 +55,12 @@ Send an SMS to a phone number.
 - **to** (string, required): Destination phone number in E.164 format (e.g. `+15551234567`)
 - **text** (string, required): Message text to send
 
-### `sms_check_inbox`
+### `sms_get_messages`
 
-Check the SMS inbox for received messages.
+Retrieve SMS messages -- both received (inbound) and sent (outbound). Filter by phone number to see a conversation with a specific person.
 
-- **from** (string, optional): Filter by sender phone number
+- **phone_number** (string, optional): Filter by phone number (matches sender on inbound, recipient on outbound)
+- **direction** (string, optional): `"inbound"`, `"outbound"`, or `"all"` (default: `"all"`)
 - **since_minutes_ago** (number, optional): Only messages within this window (default: 60)
 - **limit** (number, optional): Max messages to return (default: 20)
 - **offset** (number, optional): Skip N messages for pagination (default: 0)

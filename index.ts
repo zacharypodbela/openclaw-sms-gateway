@@ -7,7 +7,7 @@ import { SmsGatewayClient } from "./src/api/client.js";
 import { parseConfig } from "./src/config.js";
 import { createLifecycleService } from "./src/service/lifecycle.js";
 import { MessageStore } from "./src/store/message-store.js";
-import { createSmsCheckInboxTool } from "./src/tools/sms-check-inbox.js";
+import { createSmsGetMessagesTool } from "./src/tools/sms-get-messages.js";
 import { createSmsGetStatusTool } from "./src/tools/sms-get-status.js";
 import { createSmsSendTool } from "./src/tools/sms-send.js";
 import { createWebhookHandler } from "./src/webhook/handler.js";
@@ -25,12 +25,12 @@ export default function register(api: OpenClawPluginApi) {
       }
       return [
         createSmsSendTool(client, config, store),
-        createSmsCheckInboxTool(store),
+        createSmsGetMessagesTool(store),
         createSmsGetStatusTool(client, store),
       ] as AnyAgentTool[];
     }) as OpenClawPluginToolFactory,
     {
-      names: ["sms_send", "sms_check_inbox", "sms_get_status"],
+      names: ["sms_send", "sms_get_messages", "sms_get_status"],
     },
   );
 
