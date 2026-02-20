@@ -31,7 +31,6 @@ export default function register(api: OpenClawPluginApi) {
     }) as OpenClawPluginToolFactory,
     {
       names: ["sms_send", "sms_check_inbox", "sms_get_status"],
-      optional: true,
     },
   );
 

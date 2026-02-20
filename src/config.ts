@@ -22,7 +22,7 @@ export function parseConfig(
 
   const apiUrl =
     optionalString(raw, "apiUrl") ?? "https://api.sms-gate.app/3rdparty/v1";
-  const defaultSimNumber = optionalInt(raw, "defaultSimNumber") ?? 0;
+  const defaultSimNumber = optionalInt(raw, "defaultSimNumber") ?? 1;
   const webhookPath =
     optionalString(raw, "webhookPath") ?? "/plugins/sms-gateway/webhook";
   const inboxRetentionMinutes =

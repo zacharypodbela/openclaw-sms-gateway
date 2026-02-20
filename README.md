@@ -41,7 +41,7 @@ Add to your `openclaw.json` under `plugins.entries.sms-gateway.config`:
 | `publicUrl` | Yes | | Publicly reachable base URL for webhook delivery |
 | `webhookSecret` | Yes | | HMAC-SHA256 secret for verifying webhook signatures |
 | `apiUrl` | No | `https://api.sms-gate.app/3rdparty/v1` | API base URL (change for local/private server mode) |
-| `defaultSimNumber` | No | `0` | SIM slot to use for sending (0 or 1) |
+| `defaultSimNumber` | No | `1` | SIM slot to use for sending (1 or 2) |
 | `webhookPath` | No | `/plugins/sms-gateway/webhook` | HTTP path for incoming webhooks |
 | `inboxRetentionMinutes` | No | `1440` (24h) | How long to keep messages in the store |
 | `maxStoreSize` | No | `500` | Maximum messages per store (inbox/sent) |

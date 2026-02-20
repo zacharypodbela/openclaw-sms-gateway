@@ -29,8 +29,8 @@ export function verifyWebhookSignature(
     return { ok: false, reason: "timestamp outside acceptable window" };
   }
 
-  // Compute expected signature: HMAC-SHA256(secret, timestamp + body)
-  const message = timestampHeader + body;
+  // Compute expected signature: HMAC-SHA256(secret, body + timestamp)
+  const message = body + timestampHeader;
   const expected = crypto
     .createHmac("sha256", secret)
     .update(message)
