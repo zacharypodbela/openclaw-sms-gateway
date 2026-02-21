@@ -34,42 +34,17 @@ Add to your `openclaw.json` under `plugins.entries.sms-gateway.config`:
 
 ### Config Fields
 
-| Field | Required | Default | Description |
-|---|---|---|---|
-| `username` | Yes | | Username from sms-gate.app Cloud Server settings |
-| `password` | Yes | | Password from sms-gate.app Cloud Server settings |
-| `publicUrl` | Yes | | Publicly reachable base URL for webhook delivery |
-| `webhookSecret` | Yes | | HMAC-SHA256 secret for verifying webhook signatures |
-| `apiUrl` | No | `https://api.sms-gate.app/3rdparty/v1` | API base URL (change for local/private server mode) |
-| `defaultSimNumber` | No | `1` | SIM slot to use for sending (1 or 2) |
-| `webhookPath` | No | `/plugins/sms-gateway/webhook` | HTTP path for incoming webhooks |
-| `retentionMinutes` | No | Unset (keep forever) | Prune messages older than this many minutes |
-| `retentionMaxMessages` | No | Unset (no limit) | Maximum messages per store (inbox/sent) |
-
-## Tools
-
-### `sms_send`
-
-Send an SMS to a phone number.
-
-- **to** (string, required): Destination phone number in E.164 format (e.g. `+15551234567`)
-- **text** (string, required): Message text to send
-
-### `sms_get_messages`
-
-Retrieve SMS messages -- both received (inbound) and sent (outbound). Filter by phone number to see a conversation with a specific person.
-
-- **phone_number** (string, optional): Filter by phone number (matches sender on inbound, recipient on outbound)
-- **direction** (string, optional): `"inbound"`, `"outbound"`, or `"all"` (default: `"all"`)
-- **since_minutes_ago** (number, optional): Only messages within this window (default: 60)
-- **limit** (number, optional): Max messages to return (default: 20)
-- **offset** (number, optional): Skip N messages for pagination (default: 0)
-
-### `sms_get_status`
-
-Check delivery status of a sent message.
-
-- **message_id** (string, required): Message ID from `sms_send`
+| Field                  | Required | Default                                | Description                                         |
+| ---------------------- | -------- | -------------------------------------- | --------------------------------------------------- |
+| `username`             | Yes      |                                        | Username from sms-gate.app Cloud Server settings    |
+| `password`             | Yes      |                                        | Password from sms-gate.app Cloud Server settings    |
+| `publicUrl`            | Yes      |                                        | Publicly reachable base URL for webhook delivery    |
+| `webhookSecret`        | Yes      |                                        | HMAC-SHA256 secret for verifying webhook signatures |
+| `apiUrl`               | No       | `https://api.sms-gate.app/3rdparty/v1` | API base URL (change for local/private server mode) |
+| `defaultSimNumber`     | No       | `1`                                    | SIM slot to use for sending (1 or 2)                |
+| `webhookPath`          | No       | `/plugins/sms-gateway/webhook`         | HTTP path for incoming webhooks                     |
+| `retentionMinutes`     | No       | Unset (keep forever)                   | Prune messages older than this many minutes         |
+| `retentionMaxMessages` | No       | Unset (no limit)                       | Maximum messages per store (inbox/sent)             |
 
 ## Real-Time Incoming SMS
 
@@ -117,6 +92,7 @@ Set `publicUrl` to the HTTPS URL provided by your tunnel.
    - Open the app once to confirm the install.
 
 2. **Adjust Device Settings**
+   - **Messages > Settings > RCS chats**: Disable RCS chats. RCS is not supported by sms-gate.app. (Without this, any messages sent as RCS will not appear in the plugin's message store, and the agent won't see them or be able to respond.)
    - **Settings > Apps > SMS Gateway**: Grant SMS, Phone, and Notification permissions. Enable "Allow restricted settings" first if needed.
    - **Settings > Apps > SMS Gateway**: Turn on "Allow background data usage" and "Allow data usage while Data saver is on".
    - **Settings > Apps > SMS Gateway > Battery**: Set to "Unrestricted" to prevent Android from killing the app in the background.
@@ -129,9 +105,32 @@ Set `publicUrl` to the HTTPS URL provided by your tunnel.
 4. **Test**
    - Send a test SMS using the `sms_send` tool to verify connectivity.
 
-## Security Considerations
+## Limitations
 
-- SMS is a tool for communicating with untrusted third parties. Incoming messages never execute as operator commands.
-- Webhook payloads are verified with HMAC-SHA256 signatures. Set a strong `webhookSecret`.
-- API credentials are sent via HTTP Basic Auth over HTTPS. Never expose `apiUrl` over plain HTTP.
-- The message store is persisted locally and pruned automatically.
+- **No historical message access.** The plugin only has access to messages received since it started listening to webhooks. If the plugin is uninstalled, the local message store is cleared, and there is no way to recover previous conversations. (The sms-gate.app API does support [reading historical inbound messages](https://docs.sms-gate.app/features/reading-messages/) via webhook replay, but it does not support reading historical sent messages. We could add this integration for partial message history support in the future.)
+- **RCS & MMS not supported.** sms-gate.app only handles SMS. Group chats which are typically MMS and RCS messages will not be routed through the gateway (see [Android Phone Setup](#android-phone-setup) for how to disable RCS).
+
+## Tools
+
+### `sms_send`
+
+Send an SMS to a phone number.
+
+- **to** (string, required): Destination phone number in E.164 format (e.g. `+15551234567`)
+- **text** (string, required): Message text to send
+
+### `sms_get_messages`
+
+Retrieve SMS messages -- both received (inbound) and sent (outbound). Filter by phone number to see a conversation with a specific person.
+
+- **phone_number** (string, optional): Filter by phone number (matches sender on inbound, recipient on outbound)
+- **direction** (string, optional): `"inbound"`, `"outbound"`, or `"all"` (default: `"all"`)
+- **since_minutes_ago** (number, optional): Only messages within this window (default: 60)
+- **limit** (number, optional): Max messages to return (default: 20)
+- **offset** (number, optional): Skip N messages for pagination (default: 0)
+
+### `sms_get_status`
+
+Check delivery status of a sent message.
+
+- **message_id** (string, required): Message ID from `sms_send`
