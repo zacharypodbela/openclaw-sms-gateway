@@ -4,6 +4,7 @@ import {
   isRequestBodyLimitError,
   createDedupeCache,
 } from "openclaw/plugin-sdk";
+import type { OpenClawConfig, PluginRuntime } from "openclaw/plugin-sdk";
 import type { SmsGatewayConfig } from "../config.js";
 import type { MessageStore } from "../store/message-store.js";
 import { verifyWebhookSignature } from "./signature.js";
@@ -15,6 +16,8 @@ const DEDUPE_MAX_SIZE = 1000;
 export function createWebhookHandler(
   config: SmsGatewayConfig,
   store: MessageStore,
+  runtime: PluginRuntime,
+  openclawConfig: OpenClawConfig,
 ): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
   const dedupe = createDedupeCache({
     ttlMs: DEDUPE_TTL_MS,
@@ -88,7 +91,7 @@ export function createWebhookHandler(
     // Route by event type
     switch (event) {
       case "sms:received":
-        handleSmsReceived(store, payload, data);
+        handleSmsReceived(store, payload, data, runtime, openclawConfig);
         break;
       case "sms:sent":
         handleSmsStatusUpdate(store, payload, "sent");
@@ -115,6 +118,8 @@ function handleSmsReceived(
   store: MessageStore,
   payload: Record<string, unknown>,
   data: Record<string, unknown>,
+  runtime: PluginRuntime,
+  openclawConfig: OpenClawConfig,
 ): void {
   const phoneNumber = typeof payload.phoneNumber === "string" ? payload.phoneNumber : "";
   const message = typeof payload.message === "string" ? payload.message : "";
@@ -135,6 +140,43 @@ function handleSmsReceived(
     receivedAt: Number.isFinite(receivedAt) ? receivedAt : Date.now(),
     simNumber,
   });
+
+  // Notify the agent loop about the incoming SMS
+  const preview = message.length > 140 ? message.slice(0, 140) + "…" : message;
+  const eventText = `SMS received from ${phoneNumber}: ${preview}`;
+
+  // If hooks are configured, POST to /hooks/wake for an immediate heartbeat.
+  // Otherwise, fall back to enqueueSystemEvent (agent sees it on next turn).
+  const hooksToken = openclawConfig.hooks?.enabled === true
+    ? openclawConfig.hooks?.token?.trim()
+    : undefined;
+
+  if (hooksToken) {
+    const port = openclawConfig.gateway?.port ?? 18789;
+    const hooksPath = openclawConfig.hooks?.path?.trim() || "/hooks";
+    const url = `http://127.0.0.1:${port}${hooksPath}/wake`;
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${hooksToken}`,
+      },
+      body: JSON.stringify({ text: eventText, mode: "now" }),
+    }).catch(() => {
+      // Best-effort: message is in the store regardless, so the agent
+      // can still retrieve it via sms_get_messages on the next turn.
+    });
+  } else {
+    const route = runtime.channel.routing.resolveAgentRoute({
+      cfg: openclawConfig,
+      channel: "sms-gateway",
+      peer: { kind: "direct", id: phoneNumber },
+    });
+    runtime.system.enqueueSystemEvent(eventText, {
+      sessionKey: route.sessionKey,
+      contextKey: `sms:received:${id}`,
+    });
+  }
 }
 
 function handleSmsStatusUpdate(

@@ -37,7 +37,7 @@ export default function register(api: OpenClawPluginApi) {
   // Webhook route
   api.registerHttpRoute({
     path: config.webhookPath,
-    handler: createWebhookHandler(config, store),
+    handler: createWebhookHandler(config, store, api.runtime, api.config),
   });
 
   // Background service

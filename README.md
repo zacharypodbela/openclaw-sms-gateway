@@ -71,6 +71,21 @@ Check delivery status of a sent message.
 
 - **message_id** (string, required): Message ID from `sms_send`
 
+## Real-Time Incoming SMS
+
+When an SMS arrives, the plugin can immediately wake the agent to respond. This requires [OpenClaw hooks](https://docs.openclaw.ai/automation/webhook) to be enabled in your `openclaw.json`:
+
+```json
+{
+  "hooks": {
+    "enabled": true,
+    "token": "any-secret-string"
+  }
+}
+```
+
+Without hooks enabled, incoming SMS messages are still stored and the agent will see them on its next wake (e.g. heartbeat or the next message from another channel), but it won't respond immediately.
+
 ## Making `publicUrl` Reachable
 
 The plugin registers webhooks with sms-gate.app. For webhook delivery to work, `publicUrl` must be reachable from the internet. How you accomplish this is your responsibility. Common options:
