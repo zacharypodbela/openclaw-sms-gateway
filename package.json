@@ -1,8 +1,28 @@
 {
   "name": "openclaw-sms-gateway",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Send and receive SMS via sms-gate.app",
   "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zacharypodbela/openclaw-sms-gateway.git"
+  },
+  "keywords": [
+    "openclaw",
+    "openclaw-plugin",
+    "sms",
+    "sms-gateway",
+    "sms-gate"
+  ],
+  "files": [
+    "index.ts",
+    "src/**/*.ts",
+    "!src/**/*.test.ts",
+    "openclaw.plugin.json",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest",
