@@ -1,8 +1,4 @@
-import type {
-  AnyAgentTool,
-  OpenClawPluginApi,
-  OpenClawPluginToolFactory,
-} from "openclaw/plugin-sdk";
+import type { AnyAgentTool, OpenClawPluginApi } from "openclaw/plugin-sdk";
 import { SmsGatewayClient } from "./src/api/client.js";
 import { parseConfig } from "./src/config.js";
 import { createLifecycleService } from "./src/service/lifecycle.js";
@@ -19,7 +15,7 @@ export default function register(api: OpenClawPluginApi) {
 
   // Tools -- gated for sandbox
   api.registerTool(
-    ((ctx) => {
+    (ctx: { sandboxed?: boolean }) => {
       if (ctx.sandboxed) {
         return null;
       }
@@ -28,7 +24,7 @@ export default function register(api: OpenClawPluginApi) {
         createSmsGetMessagesTool(store),
         createSmsGetStatusTool(client, store),
       ] as AnyAgentTool[];
-    }) as OpenClawPluginToolFactory,
+    },
     {
       names: ["sms_send", "sms_get_messages", "sms_get_status"],
     },

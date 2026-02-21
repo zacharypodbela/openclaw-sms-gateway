@@ -1,7 +1,6 @@
 import type {
   OpenClawPluginService,
   OpenClawPluginServiceContext,
-  PluginLogger,
 } from "openclaw/plugin-sdk";
 import type { SmsGatewayClient } from "../api/client.js";
 import type { SmsGatewayConfig } from "../config.js";
@@ -60,7 +59,7 @@ export function createLifecycleService(
 async function registerWebhooks(
   config: SmsGatewayConfig,
   client: SmsGatewayClient,
-  logger: PluginLogger,
+  logger: OpenClawPluginServiceContext["logger"],
 ): Promise<void> {
   const webhookUrl = config.publicUrl + config.webhookPath;
 

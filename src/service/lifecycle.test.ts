@@ -167,7 +167,7 @@ describe("createLifecycleService", () => {
       await service.start(ctx);
 
       vi.mocked(store.flush).mockClear();
-      await service.stop(ctx);
+      await service.stop!(ctx);
 
       // Advancing timer should not trigger another flush
       await vi.advanceTimersByTimeAsync(30_000);
