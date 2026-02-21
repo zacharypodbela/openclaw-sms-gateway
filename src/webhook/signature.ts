@@ -2,9 +2,7 @@ import crypto from "node:crypto";
 
 const DEFAULT_MAX_SKEW_SECONDS = 300; // 5 minutes
 
-export type VerifyResult =
-  | { ok: true }
-  | { ok: false; reason: string };
+export type VerifyResult = { ok: true } | { ok: false; reason: string };
 
 export function verifyWebhookSignature(
   secret: string,
@@ -31,10 +29,7 @@ export function verifyWebhookSignature(
 
   // Compute expected signature: HMAC-SHA256(secret, body + timestamp)
   const message = body + timestampHeader;
-  const expected = crypto
-    .createHmac("sha256", secret)
-    .update(message)
-    .digest("hex");
+  const expected = crypto.createHmac("sha256", secret).update(message).digest("hex");
 
   // Timing-safe comparison
   if (expected.length !== signatureHeader.length) {

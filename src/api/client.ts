@@ -26,8 +26,7 @@ export class SmsGatewayClient {
   constructor(config: SmsGatewayConfig) {
     this.baseUrl = config.apiUrl;
     this.authHeader =
-      "Basic " +
-      Buffer.from(`${config.username}:${config.password}`).toString("base64");
+      "Basic " + Buffer.from(`${config.username}:${config.password}`).toString("base64");
   }
 
   async sendMessage(
@@ -49,11 +48,7 @@ export class SmsGatewayClient {
     return await this.request<MessageStateResponse>("GET", `/messages/${encodeURIComponent(id)}`);
   }
 
-  async registerWebhook(
-    id: string,
-    url: string,
-    event: string,
-  ): Promise<unknown> {
+  async registerWebhook(id: string, url: string, event: string): Promise<unknown> {
     return await this.request("POST", "/webhooks", { id, url, event });
   }
 
@@ -65,11 +60,7 @@ export class SmsGatewayClient {
     await this.request("DELETE", `/webhooks/${encodeURIComponent(id)}`);
   }
 
-  private async request<T = unknown>(
-    method: string,
-    path: string,
-    body?: unknown,
-  ): Promise<T> {
+  private async request<T = unknown>(method: string, path: string, body?: unknown): Promise<T> {
     const url = `${this.baseUrl}${path}`;
     const headers: Record<string, string> = {
       Authorization: this.authHeader,
@@ -90,8 +81,7 @@ export class SmsGatewayClient {
       res = await fetch(url, init);
     } catch (err) {
       // Never leak credentials in error messages
-      const message =
-        err instanceof Error ? err.message : "unknown network error";
+      const message = err instanceof Error ? err.message : "unknown network error";
       throw new Error(`sms-gateway API request failed: ${message}`);
     }
 

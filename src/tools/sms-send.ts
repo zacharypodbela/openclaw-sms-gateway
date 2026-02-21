@@ -12,8 +12,7 @@ export function createSmsSendTool(
   return {
     name: "sms_send",
     label: "Send SMS",
-    description:
-      "Send an SMS text message to a phone number via the Android SMS gateway.",
+    description: "Send an SMS text message to a phone number via the Android SMS gateway.",
     parameters: Type.Object({
       to: Type.String({
         description: "Destination phone number in E.164 format (e.g. +15551234567)",
@@ -34,11 +33,7 @@ export function createSmsSendTool(
       }
 
       const to = normalizeE164(toRaw);
-      const response = await client.sendMessage(
-        [to],
-        text,
-        config.defaultSimNumber,
-      );
+      const response = await client.sendMessage([to], text, config.defaultSimNumber);
 
       const messageId = response.id ?? "";
       store.addSentMessage({

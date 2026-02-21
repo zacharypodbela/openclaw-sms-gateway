@@ -123,9 +123,8 @@ function handleSmsReceived(
 ): void {
   const phoneNumber = typeof payload.phoneNumber === "string" ? payload.phoneNumber : "";
   const message = typeof payload.message === "string" ? payload.message : "";
-  const receivedAt = typeof payload.receivedAt === "string"
-    ? new Date(payload.receivedAt).getTime()
-    : Date.now();
+  const receivedAt =
+    typeof payload.receivedAt === "string" ? new Date(payload.receivedAt).getTime() : Date.now();
   const simNumber = typeof payload.simNumber === "number" ? payload.simNumber : 0;
   const id = typeof data.id === "string" ? data.id : crypto.randomUUID();
 
@@ -147,9 +146,8 @@ function handleSmsReceived(
 
   // If hooks are configured, POST to /hooks/wake for an immediate heartbeat.
   // Otherwise, fall back to enqueueSystemEvent (agent sees it on next turn).
-  const hooksToken = openclawConfig.hooks?.enabled === true
-    ? openclawConfig.hooks?.token?.trim()
-    : undefined;
+  const hooksToken =
+    openclawConfig.hooks?.enabled === true ? openclawConfig.hooks?.token?.trim() : undefined;
 
   if (hooksToken) {
     const port = openclawConfig.gateway?.port ?? 18789;
@@ -191,10 +189,7 @@ function handleSmsStatusUpdate(
   store.updateSentStatus(messageId, status);
 }
 
-function handleSmsFailed(
-  store: MessageStore,
-  payload: Record<string, unknown>,
-): void {
+function handleSmsFailed(store: MessageStore, payload: Record<string, unknown>): void {
   const messageId = typeof payload.messageId === "string" ? payload.messageId : "";
   const error = typeof payload.error === "string" ? payload.error : "unknown error";
   if (!messageId) {

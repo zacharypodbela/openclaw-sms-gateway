@@ -2,8 +2,23 @@ import { Type } from "@sinclair/typebox";
 import type { InboxMessage, SentMessage, MessageStore } from "../store/message-store.js";
 
 type UnifiedMessage =
-  | { direction: "inbound"; id: string; from: string; text: string; receivedAt: number; simNumber: number }
-  | { direction: "outbound"; id: string; to: string; text: string; sentAt: number; status: string; errorReason: string | null };
+  | {
+      direction: "inbound";
+      id: string;
+      from: string;
+      text: string;
+      receivedAt: number;
+      simNumber: number;
+    }
+  | {
+      direction: "outbound";
+      id: string;
+      to: string;
+      text: string;
+      sentAt: number;
+      status: string;
+      errorReason: string | null;
+    };
 
 export function createSmsGetMessagesTool(store: MessageStore) {
   return {
@@ -27,8 +42,7 @@ export function createSmsGetMessagesTool(store: MessageStore) {
       ),
       since_minutes_ago: Type.Optional(
         Type.Number({
-          description:
-            "Only return messages within this many minutes (default: 60)",
+          description: "Only return messages within this many minutes (default: 60)",
         }),
       ),
       limit: Type.Optional(
@@ -47,16 +61,11 @@ export function createSmsGetMessagesTool(store: MessageStore) {
         typeof params.phone_number === "string" && params.phone_number.trim()
           ? params.phone_number.trim()
           : undefined;
-      const direction =
-        typeof params.direction === "string" ? params.direction : "all";
+      const direction = typeof params.direction === "string" ? params.direction : "all";
       const sinceMinutes =
-        typeof params.since_minutes_ago === "number"
-          ? params.since_minutes_ago
-          : 60;
-      const limit =
-        typeof params.limit === "number" ? Math.max(1, params.limit) : 20;
-      const offset =
-        typeof params.offset === "number" ? Math.max(0, params.offset) : 0;
+        typeof params.since_minutes_ago === "number" ? params.since_minutes_ago : 60;
+      const limit = typeof params.limit === "number" ? Math.max(1, params.limit) : 20;
+      const offset = typeof params.offset === "number" ? Math.max(0, params.offset) : 0;
 
       const sinceMs = sinceMinutes * 60 * 1000;
       const messages: UnifiedMessage[] = [];

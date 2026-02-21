@@ -102,12 +102,7 @@ export class MessageStore {
     return reversed.slice(opts.offset, opts.offset + opts.limit);
   }
 
-  querySent(opts: {
-    to?: string;
-    sinceMs?: number;
-    limit: number;
-    offset: number;
-  }): SentMessage[] {
+  querySent(opts: { to?: string; sinceMs?: number; limit: number; offset: number }): SentMessage[] {
     let results = this.data.sent;
 
     if (opts.to) {
@@ -137,11 +132,7 @@ export class MessageStore {
     return this.data.sent.find((m) => m.id === id);
   }
 
-  updateSentStatus(
-    messageId: string,
-    status: SentStatus,
-    errorReason?: string,
-  ): boolean {
+  updateSentStatus(messageId: string, status: SentStatus, errorReason?: string): boolean {
     const msg = this.data.sent.find((m) => m.id === messageId);
     if (!msg) {
       return false;
@@ -175,11 +166,7 @@ export class MessageStore {
     try {
       const raw = await fs.readFile(this.storePath, "utf8");
       const parsed = JSON.parse(raw) as Record<string, unknown>;
-      if (
-        parsed.version === 1 &&
-        Array.isArray(parsed.inbox) &&
-        Array.isArray(parsed.sent)
-      ) {
+      if (parsed.version === 1 && Array.isArray(parsed.inbox) && Array.isArray(parsed.sent)) {
         this.data = parsed as unknown as StoreData;
         this.prune();
       }
@@ -200,14 +187,10 @@ export class MessageStore {
     // Cap at maxSize (remove oldest from front)
     if (this.maxSize != null) {
       if (this.data.inbox.length > this.maxSize) {
-        this.data.inbox = this.data.inbox.slice(
-          this.data.inbox.length - this.maxSize,
-        );
+        this.data.inbox = this.data.inbox.slice(this.data.inbox.length - this.maxSize);
       }
       if (this.data.sent.length > this.maxSize) {
-        this.data.sent = this.data.sent.slice(
-          this.data.sent.length - this.maxSize,
-        );
+        this.data.sent = this.data.sent.slice(this.data.sent.length - this.maxSize);
       }
     }
   }
